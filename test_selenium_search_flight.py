@@ -38,7 +38,7 @@ if __name__ == '__main__':
     list_filtered_elements = list(filter(lambda element: element.accessible_name != "", list_input_elements))  
 
     #print the list filtered
-    #Fc.print_list_elements(list_filtered_elements)
+    Fc.print_list_elements(list_filtered_elements)
 
     #type city
     Fc.type_simple_input(list_filtered_elements[0], "São Paulo")
@@ -57,7 +57,6 @@ if __name__ == '__main__':
     #find button
     div_button = div_master.find_element(By.CLASS_NAME, "MXvFbd")
     button_search = div_button.find_elements(By.XPATH, ".//button")    
-    Fc.print_list_elements(button_search)
     button_search[0].click()
     
     # Dorme por 10 segundos
