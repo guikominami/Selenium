@@ -19,18 +19,19 @@ if __name__ == '__main__':
     chrome_browser.maximize_window()
     chrome_browser.get('https://www.google.com/travel/flights')
 
-    # wait for button cookies
-    button_cookies = Fc.wait_for_object(chrome_browser, By.XPATH, "//button[@aria-label='Rechazar todo']", TIME_TO_WAIT)
+    # wait for button cookies  
+    div_master = Fc.wait_for_object(chrome_browser, By.CLASS_NAME, "lssxud", TIME_TO_WAIT)
+
+    #identify button reject
+    button_reject_cookies = div_master.find_elements(By.XPATH, ".//button")    
 
     #click refuse
-    if button_cookies != 0:
-        button_cookies.click() 
+    button_reject_cookies[0].click() 
 
     #wait for field FROM and TO
-    button_cookies = Fc.wait_for_object(chrome_browser, By.CLASS_NAME, "rIZzse", TIME_TO_WAIT)
+    div_master = Fc.wait_for_object(chrome_browser, By.CLASS_NAME, "vg4Z0e", TIME_TO_WAIT)
 
     #find input element 
-    div_master = chrome_browser.find_element(By.CLASS_NAME, "vg4Z0e")    
     div_fields = div_master.find_element(By.CLASS_NAME, "rIZzse")
     list_input_elements = div_master.find_elements(By.XPATH, ".//input")
 
