@@ -33,10 +33,11 @@ def wait_for_object(browser, type, description, time):
 def print_list_elements(list_of_elements):
     for element in list_of_elements:
         print("ELEMENT:")   
-        print(element.aria_role)
-        print(element.accessible_name)
-        print(element.id)
-        print(element.tag_name)
+        print("role: " + element.aria_role)
+        print("accessible name: " + element.accessible_name)
+        print("ID: " + element.id)
+        print("tag name: " + element.tag_name)
+        print("text: " + element.text)        
         print("")
         print("")           
 
