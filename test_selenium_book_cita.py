@@ -39,34 +39,48 @@ def select_province(province):
     
     return True
 
-def select_oficinas(oficina, tramite):
+def select_place(place):
 
     form_main = Fc.wait_for_object(chrome_browser, By.ID, "portadaForm", TIME_TO_WAIT)
 
     div_oficinas = Fc.wait_for_object(form_main, By.ID, "divSedes", TIME_TO_WAIT)
-    select = Select(div_oficinas.find_element(By.NAME, "sede"))
-    select.select_by_visible_text(oficina)    
+
+    if div_oficinas != 0:
+        select = Select(div_oficinas.find_element(By.NAME, "sede"))
+        select.select_by_visible_text(place)    
+    else:
+        return False
+    
+    return True    
+
+def select_task(task):
 
     #wait for div because variables according with the local selected before
     div_tramites = Fc.wait_for_object(chrome_browser, By.ID, "divGrupoTramites", TIME_TO_WAIT)
 
     if div_tramites != 0:
         select_tramite = Select(div_tramites.find_element(By.NAME, "tramiteGrupo[0]"))    
-        select_tramite.select_by_visible_text(tramite)  
+        select_tramite.select_by_visible_text(task)  
     else:
-        print("tramite nao encontrado")
+        print("tramite nao encontrado")        
+        return False        
 
     link_cookies = Fc.wait_for_object(chrome_browser, By.ID, "cookie_action_close_header", TIME_TO_WAIT)   
     if link_cookies != 0:    
-        link_cookies.click()
+        link_cookies.click()       
 
     div_form = Fc.wait_for_object(chrome_browser, By.ID, "portadaForm", TIME_TO_WAIT)
     button_accept = Fc.wait_for_object(div_form, By.ID, "btnAceptar", TIME_TO_WAIT)    
     button_accept = div_form.find_element(By.ID, "btnAceptar")
-    #if button_accept != 0:
-    #    button_accept.click()
+    if button_accept != 0:
+        button_accept.click()
+    else:
+        print("botão aceitar nao encontrado")        
+        return False  
+    
+    return True      
 
-    button_accept.click()
+def select_key_type():    
 
     button_no_key = Fc.wait_for_object(chrome_browser, By.ID, "btnEntrar", TIME_TO_WAIT)    
 
@@ -74,7 +88,12 @@ def select_oficinas(oficina, tramite):
         #the button is not ckickable. We have to find links (p) inside the component "btnEntrar"
         link_no_key = button_no_key.find_elements(By.XPATH, ".//p")        
         link_no_key[0].click()
-        
+    else:
+        print("botão aceitar nao encontrado")        
+        return False       
+
+    return True          
+            
 
 def type_personal_data(nie, name, country):
     div_master = Fc.wait_for_object(chrome_browser, By.ID, "divIdCitado", TIME_TO_WAIT)   
@@ -98,6 +117,8 @@ def type_personal_data(nie, name, country):
         if button_send != 0:
             button_send.click()
 
+    return True                 
+
 def book_quote():
     div_master = Fc.wait_for_object(chrome_browser, By.ID, "btn", TIME_TO_WAIT)   
     if div_master != 0:      
@@ -110,8 +131,11 @@ def book_quote():
         if button_accept != 0:   
             button_accept.click()
 
+    return True                 
+
 if __name__ == '__main__':
-    TIME_TO_WAIT = 5
+    TIME_TO_WAIT = 15
+    TIME_SLEEP = 10
 
     link = 'https://sede.administracionespublicas.gob.es/pagina/index/directorio/icpplus'
 
@@ -126,24 +150,53 @@ if __name__ == '__main__':
             test_passed = select_province(data_item['provincia'])
         else:
             print('Submit process failed')
+            quit()     
+
+        sleep(TIME_SLEEP)             
 
         if test_passed == True:
-            test_passed = select_oficinas(data_item['oficina'], data_item['tramite_policia'])
+            test_passed = select_place(data_item['oficina'])
         else:
-            print('Select province failed')            
+            print('Select province failed')          
+            quit()         
+
+        sleep(TIME_SLEEP)                         
+
+        if test_passed == True:
+            test_passed = select_task(data_item['tramite_policia'])
+        else:
+            print('Select task failed')          
+            quit()    
+
+        sleep(TIME_SLEEP)                                 
+
+        if test_passed == True:
+            test_passed = select_key_type()
+        else:
+            print('Select key type failed')          
+            quit()     
+
+        sleep(TIME_SLEEP)                                   
 
         if test_passed == True:
             test_passed = type_personal_data(data_item['nie'], data_item['name'], data_item['country'])
         else:
-            print('Select oficinas failed')               
+            print('Select oficinas failed')         
+            quit()    
+
+        sleep(TIME_SLEEP)                   
 
         if test_passed == True:
             test_passed = book_quote()
         else:
-            print('Type personal data failed')       
+            print('Type personal data failed')     
+            quit()    
+
+        sleep(TIME_SLEEP)                                 
 
         if test_passed == False:                    
             print('Book quote failed')      
+            quit()                  
 
         # Dorme por 10 segundos
         sleep(TIME_TO_WAIT)
