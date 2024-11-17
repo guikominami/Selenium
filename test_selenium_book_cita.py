@@ -10,7 +10,7 @@ from selenium.webdriver.support.ui import Select
 from selenium.webdriver.common.keys import Keys
 
 import functions as Fc
-from test_data import Citas as Data_Citas
+from test_data_citas import Citas as Data_Citas
 
 def submit_process():
     # wait for button cookies
