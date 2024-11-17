@@ -11,15 +11,20 @@ from selenium.webdriver.common.keys import Keys
 
 import functions as Fc
 from test_data import Citas as Data_Citas
- 
-def select_province(province):
 
+def submit_process():
     # wait for button cookies
     button_submit = Fc.wait_for_object(chrome_browser, By.ID, "submit", TIME_TO_WAIT)
 
     #click refuse
     if button_submit != 0:
         button_submit.click() 
+    else:
+        return False
+
+    return True        
+
+def select_province(province):
 
     div_provincias = Fc.wait_for_object(chrome_browser, By.ID, "divProvincias", TIME_TO_WAIT)
     select = Select(div_provincias.find_element(By.NAME, "form"))
@@ -29,6 +34,10 @@ def select_province(province):
     
     if button_accept != 0:
         button_accept.click()
+    else:
+        return False
+    
+    return True
 
 def select_oficinas(oficina, tramite):
 
@@ -42,42 +51,99 @@ def select_oficinas(oficina, tramite):
     div_tramites = Fc.wait_for_object(chrome_browser, By.ID, "divGrupoTramites", TIME_TO_WAIT)
 
     if div_tramites != 0:
-        select = Select(div_tramites.find_element(By.NAME, "tramiteGrupo[0]"))    
-        select.select_by_visible_text(tramite)  
+        select_tramite = Select(div_tramites.find_element(By.NAME, "tramiteGrupo[0]"))    
+        select_tramite.select_by_visible_text(tramite)  
     else:
         print("tramite nao encontrado")
 
-    select.send_keys(Keys.TAB)    
-    sleep(10)
+    link_cookies = Fc.wait_for_object(chrome_browser, By.ID, "cookie_action_close_header", TIME_TO_WAIT)   
+    if link_cookies != 0:    
+        link_cookies.click()
 
-   # button_accept = Fc.wait_for_object(chrome_browser, By.ID, "btnAceptar", TIME_TO_WAIT)    
-    button_accept = chrome_browser.find_element(By.ID, "btnAceptar")
+    div_form = Fc.wait_for_object(chrome_browser, By.ID, "portadaForm", TIME_TO_WAIT)
+    button_accept = Fc.wait_for_object(div_form, By.ID, "btnAceptar", TIME_TO_WAIT)    
+    button_accept = div_form.find_element(By.ID, "btnAceptar")
     #if button_accept != 0:
     #    button_accept.click()
-    Fc.print_list_elements(button_accept)    
+
+    button_accept.click()
 
     button_no_key = Fc.wait_for_object(chrome_browser, By.ID, "btnEntrar", TIME_TO_WAIT)    
-    Fc.print_list_elements(button_no_key)
-    # if button_no_key != 0:
+
+    if button_no_key != 0:
+        #the button is not ckickable. We have to find links (p) inside the component "btnEntrar"
+        link_no_key = button_no_key.find_elements(By.XPATH, ".//p")        
+        link_no_key[0].click()
         
 
+def type_personal_data(nie, name, country):
+    div_master = Fc.wait_for_object(chrome_browser, By.ID, "divIdCitado", TIME_TO_WAIT)   
+    input_nie = Fc.wait_for_object(div_master, By.ID, "txtIdCitado", TIME_TO_WAIT)     
+    
+    if input_nie != 0:        
+        Fc.type_simple_input_clear(input_nie, nie)    
+
+    div_master = Fc.wait_for_object(chrome_browser, By.ID, "divDesCitado", TIME_TO_WAIT)   
+    input_name = Fc.wait_for_object(div_master, By.ID, "txtDesCitado", TIME_TO_WAIT)         
+
+    if input_name != 0:
+        Fc.type_simple_input_clear(input_name, name)             
+
+    div_master = Fc.wait_for_object(chrome_browser, By.ID, "divPaisNac", TIME_TO_WAIT)     
+    if div_master != 0:
+        select_country = Select(div_master.find_element(By.NAME, "txtPaisNac"))           
+        select_country.select_by_visible_text(country)   
+
+        button_send = Fc.wait_for_object(chrome_browser, By.ID, "btnEnviar", TIME_TO_WAIT)        
+        if button_send != 0:
+            button_send.click()
+
+def book_quote():
+    div_master = Fc.wait_for_object(chrome_browser, By.ID, "btn", TIME_TO_WAIT)   
+    if div_master != 0:      
+        button_send = Fc.wait_for_object(div_master, By.ID, "btnEnviar", TIME_TO_WAIT)  
+        button_send.click()   
+    else:
+        print("There isn't quotes available!")
+        div_master = Fc.wait_for_object(chrome_browser, By.NAME, "info", TIME_TO_WAIT)        
+        button_accept = Fc.wait_for_object(div_master, By.ID, "btnSubmit", TIME_TO_WAIT)  
+        if button_accept != 0:   
+            button_accept.click()
+
 if __name__ == '__main__':
-    TIME_TO_WAIT = 55
+    TIME_TO_WAIT = 5
 
     link = 'https://sede.administracionespublicas.gob.es/pagina/index/directorio/icpplus'
 
-
-    for data_item in Data_Citas[0]:
-        print (data_item['oficina'])
-        
+    for data_item in Data_Citas[0]:       
         # Example
         # options = '--headless', '--disable-gpu',
-        options = ()
-        chrome_browser = Fc.make_chrome_browser(link, *options)
+        chrome_browser = Fc.make_chrome_browser(link)
 
-        select_province(data_item['provincia'])
+        test_passed = submit_process() 
 
-        select_oficinas(data_item['oficina'], data_item['tramite_policia'])
+        if test_passed == True:
+            test_passed = select_province(data_item['provincia'])
+        else:
+            print('Submit process failed')
+
+        if test_passed == True:
+            test_passed = select_oficinas(data_item['oficina'], data_item['tramite_policia'])
+        else:
+            print('Select province failed')            
+
+        if test_passed == True:
+            test_passed = type_personal_data(data_item['nie'], data_item['name'], data_item['country'])
+        else:
+            print('Select oficinas failed')               
+
+        if test_passed == True:
+            test_passed = book_quote()
+        else:
+            print('Type personal data failed')       
+
+        if test_passed == False:                    
+            print('Book quote failed')      
 
         # Dorme por 10 segundos
         sleep(TIME_TO_WAIT)

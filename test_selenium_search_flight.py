@@ -41,14 +41,14 @@ if __name__ == '__main__':
     Fc.print_list_elements(list_filtered_elements)
 
     #type city
-    Fc.type_simple_input(list_filtered_elements[0], "São Paulo")
+    Fc.type_simple_input_clear(list_filtered_elements[0], "São Paulo")
 
     #click in the first result in list
     input_from = Fc.wait_for_object(chrome_browser, By.CLASS_NAME, "zsRT0d", TIME_TO_WAIT)
     input_from.click()
 
     #type city
-    Fc.type_simple_input(list_filtered_elements[1], "Santiago")
+    Fc.type_simple_input_clear(list_filtered_elements[1], "Santiago")
 
     #click in the first result in list
     input_from = Fc.wait_for_object(chrome_browser, By.CLASS_NAME, "zsRT0d", TIME_TO_WAIT)

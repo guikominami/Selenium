@@ -29,8 +29,8 @@ def wait_for_object(browser, type, description, time):
             )
         )    
         return element    
-    except RuntimeError:
-        print("element not found")
+    except:
+        print("element " + description + " not found")
         return 0
     
 def print_list_elements(list_of_elements):
@@ -44,8 +44,12 @@ def print_list_elements(list_of_elements):
         print("")
         print("")           
 
-def type_simple_input(input_field, value):
+def type_simple_input_clear(input_field, value):
     input_field.send_keys(Keys.CONTROL + 'A')
     input_field.send_keys(Keys.DELETE)
     input_field.send_keys(value)
     input_field.send_keys(Keys.TAB)    
+
+def type_simple_input(input_field, value):
+    input_field.send_keys(value)
+    input_field.send_keys(Keys.TAB)        
