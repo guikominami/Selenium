@@ -15,9 +15,7 @@ if __name__ == '__main__':
     # Example
     # options = '--headless', '--disable-gpu',
     options = ()
-    chrome_browser = Fc.make_chrome_browser(*options)
-    chrome_browser.maximize_window()
-    chrome_browser.get('https://www.google.com/travel/flights')
+    chrome_browser = Fc.make_chrome_browser('https://www.google.com/travel/flights', *options)
 
     # wait for button cookies  
     div_master = Fc.wait_for_object(chrome_browser, By.CLASS_NAME, "lssxud", TIME_TO_WAIT)
@@ -26,7 +24,8 @@ if __name__ == '__main__':
     button_reject_cookies = div_master.find_elements(By.XPATH, ".//button")    
 
     #click refuse
-    button_reject_cookies[0].click() 
+    if button_reject_cookies != 0:
+        button_reject_cookies[0].click() 
 
     #wait for field FROM and TO
     div_master = Fc.wait_for_object(chrome_browser, By.CLASS_NAME, "vg4Z0e", TIME_TO_WAIT)

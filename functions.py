@@ -4,7 +4,7 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
 
-def make_chrome_browser(*options: str) -> webdriver.Chrome:
+def make_chrome_browser(link, *options: str) -> webdriver.Chrome:
     chrome_options = webdriver.ChromeOptions()
 
     # chrome_options.add_argument('--headless')
@@ -15,6 +15,9 @@ def make_chrome_browser(*options: str) -> webdriver.Chrome:
     browser = webdriver.Chrome(
         options=chrome_options
     )
+
+    browser.maximize_window()
+    browser.get(link)
 
     return browser
 

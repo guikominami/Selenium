@@ -14,18 +14,14 @@ if __name__ == '__main__':
 
     # Example
     options = ()
-    chrome_browser = Fc.make_chrome_browser(*options)
+    chrome_browser = Fc.make_chrome_browser('https://www.google.com', *options)
 
-    # Como antes
-    chrome_browser.get('https://www.google.com')
+    #identify button reject
+    button_reject_cookies = Fc.wait_for_object(chrome_browser, By.ID, "W0wltc", TIME_TO_WAIT)  
 
-    # wait for button cookies
-    # (pelo Id funciona, porém, muda em outros links)
-    #button_cookies = Fc.wait_for_object(chrome_browser, By.ID, "W0wltc", TIME_TO_WAIT)
-    button_cookies = Fc.wait_for_object(chrome_browser, By.XPATH, "//button[@aria-label='Rechazar todo']", TIME_TO_WAIT)
-
-    if button_cookies != 0:
-        button_cookies.click() 
+    #click refuse
+    if button_reject_cookies != 0:    
+        button_reject_cookies.click() 
 
     # wait for input
     input_search = Fc.wait_for_object(chrome_browser, By.NAME, "q", TIME_TO_WAIT)
