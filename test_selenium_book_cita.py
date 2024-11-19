@@ -10,7 +10,7 @@ from selenium.webdriver.support.ui import Select
 from selenium.webdriver.common.keys import Keys
 
 import functions as Fc
-from test_data_citas import Citas as Data_Citas
+from DATA_CITAS import Citas as Data_Citas
 
 def submit_process():
     # wait for button cookies
@@ -62,7 +62,7 @@ def select_task(task):
         select_tramite = Select(div_tramites.find_element(By.NAME, "tramiteGrupo[0]"))    
         select_tramite.select_by_visible_text(task)  
     else:
-        print("tramite nao encontrado")        
+        print("ERROR: tramite nao encontrado")        
         return False        
 
     link_cookies = Fc.wait_for_object(chrome_browser, By.ID, "cookie_action_close_header", TIME_TO_WAIT)   
@@ -75,7 +75,7 @@ def select_task(task):
     if button_accept != 0:
         button_accept.click()
     else:
-        print("botão aceitar nao encontrado")        
+        print("ERROR: botão aceitar nao encontrado")        
         return False  
     
     return True      
@@ -89,7 +89,7 @@ def select_key_type():
         link_no_key = button_no_key.find_elements(By.XPATH, ".//p")        
         link_no_key[0].click()
     else:
-        print("botão aceitar nao encontrado")        
+        print("ERROR: botão aceitar nao encontrado")        
         return False       
 
     return True          
@@ -125,7 +125,7 @@ def book_quote():
         button_send = Fc.wait_for_object(div_master, By.ID, "btnEnviar", TIME_TO_WAIT)  
         button_send.click()   
     else:
-        print("There isn't quotes available!")
+        print("ERROR: There isn't quotes available!")
         div_master = Fc.wait_for_object(chrome_browser, By.NAME, "info", TIME_TO_WAIT)        
         button_accept = Fc.wait_for_object(div_master, By.ID, "btnSubmit", TIME_TO_WAIT)  
         if button_accept != 0:   
@@ -149,7 +149,7 @@ if __name__ == '__main__':
         if test_passed == True:
             test_passed = select_province(data_item['provincia'])
         else:
-            print('Submit process failed')
+            print('TEST FAILED: Submit process failed')
             quit()     
 
         sleep(TIME_SLEEP)             
@@ -157,7 +157,7 @@ if __name__ == '__main__':
         if test_passed == True:
             test_passed = select_place(data_item['oficina'])
         else:
-            print('Select province failed')          
+            print('TEST FAILED: Select province failed')          
             quit()         
 
         sleep(TIME_SLEEP)                         
@@ -165,7 +165,7 @@ if __name__ == '__main__':
         if test_passed == True:
             test_passed = select_task(data_item['tramite_policia'])
         else:
-            print('Select task failed')          
+            print('TEST FAILED: Select task failed')          
             quit()    
 
         sleep(TIME_SLEEP)                                 
@@ -173,7 +173,7 @@ if __name__ == '__main__':
         if test_passed == True:
             test_passed = select_key_type()
         else:
-            print('Select key type failed')          
+            print('TEST FAILED: Select key type failed')          
             quit()     
 
         sleep(TIME_SLEEP)                                   
@@ -181,7 +181,7 @@ if __name__ == '__main__':
         if test_passed == True:
             test_passed = type_personal_data(data_item['nie'], data_item['name'], data_item['country'])
         else:
-            print('Select oficinas failed')         
+            print('TEST FAILED: Select oficinas failed')         
             quit()    
 
         sleep(TIME_SLEEP)                   
@@ -189,13 +189,13 @@ if __name__ == '__main__':
         if test_passed == True:
             test_passed = book_quote()
         else:
-            print('Type personal data failed')     
+            print('TEST FAILED: Type personal data failed')     
             quit()    
 
         sleep(TIME_SLEEP)                                 
 
         if test_passed == False:                    
-            print('Book quote failed')      
+            print('TEST FAILED: Book quote failed')      
             quit()                  
 
         # Dorme por 10 segundos

@@ -7,7 +7,7 @@ from time import sleep
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 
-import functions as Fc
+import test_scripts.functions as Fc
 
 if __name__ == '__main__':
     TIME_TO_WAIT = 5

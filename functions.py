@@ -30,7 +30,7 @@ def wait_for_object(browser, type, description, time):
         )    
         return element    
     except:
-        print("element " + description + " not found")
+        print("ERROR: element " + description + " not found")
         return 0
     
 def print_list_elements(list_of_elements):
@@ -42,7 +42,17 @@ def print_list_elements(list_of_elements):
         print("tag name: " + element.tag_name)
         print("text: " + element.text)        
         print("")
-        print("")           
+        print("")       
+
+def print_element(element):
+    print("ELEMENT:")   
+    print("role: " + element.aria_role)
+    print("accessible name: " + element.accessible_name)
+    print("ID: " + element.id)
+    print("tag name: " + element.tag_name)
+    print("text: " + element.text)        
+    print("")
+    print("")                   
 
 def type_simple_input_clear(input_field, value):
     input_field.send_keys(Keys.CONTROL + 'A')
