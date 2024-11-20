@@ -9,6 +9,8 @@ from selenium.webdriver.common.by import By
 import functions as Fc
 from DATA_FLIGHTS import Flights
 
+from datetime import date
+
 def reject_cookies():
     # wait for button cookies  
     div_master = Fc.wait_for_object(chrome_browser, By.CLASS_NAME, "lssxud", TIME_TO_WAIT)
@@ -75,17 +77,50 @@ def select_dates():
     div_master = Fc.wait_for_object(chrome_browser, By.CLASS_NAME, "vg4Z0e", TIME_TO_WAIT)
 
     if div_master != 0:
+
+        date_departure = div_master.find_element(By.XPATH, "//div[@jscontroller='slZO9d']")    
+        date_departure.click()  
+
+        #calendar opened
+        div_calendar_master = Fc.wait_for_object(div_master, By.CLASS_NAME, "SJyhnc", TIME_TO_WAIT)
+        if div_calendar_master != 0:
+            div_calendar = div_calendar_master.find_element(By.XPATH, "//div[@jscontroller='XTf4dd']")  
+            calendar = div_calendar.find_element(By.XPATH, "//div[@role='rowgroup']")        
+        else:
+            print("ERROR: Can't open the calendar.")
+            quit()
+
+        today = date.today()
+        print("Today's date:", today)
+
+        #date departure
+        day = calendar.find_element(By.XPATH, "//div[@data-iso='" + str(today) + "']")
+        day.click()
+
+        #div_button = div_calendar_master.find_element(By.CLASS_NAME, "WXaAwc")
+        #identify button done
+        div_button = chrome_browser.find_element(By.XPATH, "//div[@jsname='WCieBd']")
+        button_done = div_button.find_elements(By.XPATH, ".//button")        
+        Fc.print_list_elements(button_done)
+        button_done[0].click() 
+
+    else:
+        print("error to wait div master")
+        return False           
+
+def select_cheap_dates():
         date_departure = div_master.find_element(By.XPATH, "//div[@jscontroller='slZO9d']")    
         date_departure.click()  
 
         div_calendar = div_master.find_element(By.XPATH, "//div[@jscontroller='XTf4dd']")  
+        
+        #a partir de duas datas, procurar as datas maiss barata de inicio e fim com 1 gap de 1 semana pra frente e uma pra tras 
 
-        calendar = div_calendar.find_elements(By.XPATH, "//div[@role='rowgroup']")           
-        Fc.print_element(calendar[0]) 
+         #calendar = div_calendar.find_elements(By.XPATH, "//div[@role='rowgroup']")        
 
-    else:
-        print("error to wait div master")
-        return False        
+        #actual_month = calendar[0].find_element(By.XPATH, "//div[@jsname='Mgvhmd']")   
+
+        #days = actual_month.find_elements(By.XPATH, "//div[@jsname='nEWxA']")             
         
 
 def click_find():
