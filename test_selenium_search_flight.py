@@ -9,7 +9,7 @@ from selenium.webdriver.common.by import By
 import functions as Fc
 from DATA_FLIGHTS import Flights
 
-from datetime import date
+from datetime import date, timedelta
 
 def reject_cookies():
     # wait for button cookies  
@@ -26,7 +26,7 @@ def reject_cookies():
 
     return True
 
-def select_destination():
+def select_destination(origin_city, destination_city):
 
      #wait for the div master of the page
     div_master = Fc.wait_for_object(chrome_browser, By.CLASS_NAME, "vg4Z0e", TIME_TO_WAIT)
@@ -39,11 +39,8 @@ def select_destination():
         #discard invalid inputs
         list_filtered_elements = list(filter(lambda element: element.accessible_name != "", list_input_elements))  
 
-        #print the list filtered
-        #Fc.print_list_elements(list_filtered_elements)
-
         #type city
-        Fc.type_simple_input_clear(list_filtered_elements[0], "São Paulo")
+        Fc.type_simple_input_clear(list_filtered_elements[0], origin_city)
 
         #click in the first result in list
         input_from = Fc.wait_for_object(chrome_browser, By.CLASS_NAME, "zsRT0d", TIME_TO_WAIT)    
@@ -55,7 +52,7 @@ def select_destination():
             return False
 
         #type city
-        Fc.type_simple_input_clear(list_filtered_elements[1], "Santiago")
+        Fc.type_simple_input_clear(list_filtered_elements[1], destination_city)
 
         #click in the first result in list
         input_from = Fc.wait_for_object(chrome_browser, By.CLASS_NAME, "zsRT0d", TIME_TO_WAIT)
@@ -71,42 +68,51 @@ def select_destination():
 
     return True
 
-def select_dates():
+def select_dates(date_departure_days, date_return_days):
 
     #wait for the div master of the page
     div_master = Fc.wait_for_object(chrome_browser, By.CLASS_NAME, "vg4Z0e", TIME_TO_WAIT)
 
     if div_master != 0:
-
-        date_departure = div_master.find_element(By.XPATH, "//div[@jscontroller='slZO9d']")    
-        date_departure.click()  
-
-        #calendar opened
-        div_calendar_master = Fc.wait_for_object(div_master, By.CLASS_NAME, "SJyhnc", TIME_TO_WAIT)
-        if div_calendar_master != 0:
-            div_calendar = div_calendar_master.find_element(By.XPATH, "//div[@jscontroller='XTf4dd']")  
-            calendar = div_calendar.find_element(By.XPATH, "//div[@role='rowgroup']")        
-        else:
-            print("ERROR: Can't open the calendar.")
-            quit()
-
-        today = date.today()
-        print("Today's date:", today)
-
-        #date departure
-        day = calendar.find_element(By.XPATH, "//div[@data-iso='" + str(today) + "']")
-        day.click()
-
-        #div_button = div_calendar_master.find_element(By.CLASS_NAME, "WXaAwc")
-        #identify button done
-        div_button = chrome_browser.find_element(By.XPATH, "//div[@jsname='WCieBd']")
-        button_done = div_button.find_elements(By.XPATH, ".//button")        
-        Fc.print_list_elements(button_done)
-        button_done[0].click() 
+        date_departure_input = div_master.find_element(By.XPATH, "//div[@jscontroller='slZO9d']")    
+        date_departure_input.click()  
 
     else:
         print("error to wait div master")
         return False           
+
+    #calendar opened
+    div_calendar_master = Fc.wait_for_object(div_master, By.CLASS_NAME, "SJyhnc", TIME_TO_WAIT)
+    if div_calendar_master != 0:
+        div_calendar = div_calendar_master.find_element(By.XPATH, "//div[@jscontroller='XTf4dd']")  
+        div_actual_month = div_calendar.find_element(By.XPATH, "//div[@role='rowgroup']")        
+    else:
+        print("ERROR: Can't open the calendar.")
+        return False    
+
+    date_departure = (date.today() + timedelta(days=date_departure_days))
+    date_return = (date.today() + timedelta(days=date_return_days))
+    print("date_departure:", date_departure)
+    print("date_return:", date_return)        
+
+    #date departure
+    day = div_actual_month.find_element(By.XPATH, "//div[@data-iso='" + str(date_departure) + "']")
+    day.click()
+
+    #date destination
+    day = div_actual_month.find_element(By.XPATH, "//div[@data-iso='" + str(date_return) + "']")
+    day.click()        
+
+    #identify button done
+    div_button = Fc.wait_for_object(chrome_browser, By.XPATH, "//div[@jsname='WCieBd']", TIME_TO_WAIT)
+    if div_button != 0:        
+        button_done = div_button.find_elements(By.XPATH, ".//button")        
+        button_done[0].click() 
+    else:
+        print("ERROR: Can't click the button open.")
+        return False                
+
+    return True       
 
 def select_cheap_dates():
         date_departure = div_master.find_element(By.XPATH, "//div[@jscontroller='slZO9d']")    
@@ -123,22 +129,21 @@ def select_cheap_dates():
         #days = actual_month.find_elements(By.XPATH, "//div[@jsname='nEWxA']")             
         
 
-def click_find():
+def click_search_flights():
 
-    #find button
-    div_master = Fc.wait_for_object(chrome_browser, By.CLASS_NAME, "MXvFbd", TIME_TO_WAIT)    
-    if div_master != 0:   
-        #div_button = div_master.find_element(By.CLASS_NAME, "MXvFbd")
-        button_search = div_master.find_elements(By.XPATH, ".//button")    
-        button_search[0].click()    
+    #identify button serach
+    div_button = Fc.wait_for_object(chrome_browser, By.CLASS_NAME, "xFFcie", TIME_TO_WAIT)
+    if div_button != 0:        
+        button_search = div_button.find_elements(By.XPATH, ".//button")        
+        button_search[0].click() 
     else:
-        print("error to wait button find")
-        return False
-    
+        print("ERROR: Can't click the button search.")
+        return False       
+
     return True    
 
 if __name__ == '__main__':
-    TIME_TO_WAIT = 5
+    TIME_TO_WAIT = 2
 
     link = 'https://www.google.com/travel/flights'
 
@@ -150,26 +155,28 @@ if __name__ == '__main__':
         test = reject_cookies()
 
         if test == False:
-            print('TEST FAILED: Reject cookies failed')
+            print('TEST FAILED: Reject cookies failed.')
             quit()    
 
-        test = select_destination()             
+        test = select_destination(data_item['departure_city'], data_item['destination_city'])             
 
         if test == False:
-            print('TEST FAILED: Select destination failed')
+            print('TEST FAILED: Select destination failed.')
             quit()     
 
-        test = select_dates()    
+        test = select_dates(data_item['date_departure'], data_item['date_return'])    
 
         if test == False:
-            print('TEST FAILED: Select dates failed')
+            print('TEST FAILED: Select dates failed.')
             quit()    
 
-        # test = click_find()                       
+        test = click_search_flights()
 
-        # if test == False:
-        #     print('TEST FAILED: Click find flights failed')                   
-        #     quit()   
+        if test == False:
+            print('TEST FAILED: Click search flights failed.')
+            quit()    
 
         # Dorme por 10 segundos
         sleep(TIME_TO_WAIT)
+
+        chrome_browser.quit()
