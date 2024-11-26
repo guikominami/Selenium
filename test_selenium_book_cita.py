@@ -10,7 +10,7 @@ from selenium.webdriver.support.ui import Select
 from selenium.webdriver.common.keys import Keys
 
 import functions as Fc
-from DATA_CITAS import Citas as Data_Citas
+from DATA_CITAS import citas
 
 def submit_process():
     # wait for button cookies
@@ -139,63 +139,55 @@ if __name__ == '__main__':
 
     link = 'https://sede.administracionespublicas.gob.es/pagina/index/directorio/icpplus'
 
-    for data_item in Data_Citas[0]:       
+    for data_item in citas:       
         # Example
         # options = '--headless', '--disable-gpu',
         chrome_browser = Fc.make_chrome_browser(link)
 
-        test_passed = submit_process() 
+        test_result = submit_process() 
 
-        if test_passed == True:
-            test_passed = select_province(data_item['provincia'])
-        else:
-            print('TEST FAILED: Submit process failed')
+        if test_result == False:
+            print('TEST FAILED: Submit process failed.')
+            quit()               
+
+        test_result = select_province(data_item['provincia'])
+
+        if test_result == False:
+            print('TEST FAILED: Select province failed.')          
+            quit()                
+
+        test_result = select_place(data_item['oficina'])               
+
+        if test_result == False:
+            print('TEST FAILED: Select place failed.')          
+            quit()                                   
+
+        test_result = select_task(data_item['tramite_policia'])
+
+        if test_result == False:
+            print('TEST FAILED: Select task failed.')          
+            quit()                                
+
+        if test_result == False:
+            print('TEST FAILED: Select key type failed.')          
+            quit()      
+
+        test_result = select_key_type()                                    
+
+        if test_result == False:
+            print('TEST FAILED: Select oficinas failed.')         
+            quit()                
+
+        test_result = type_personal_data(data_item['nie'], data_item['name'], data_item['country'])
+
+        if test_result == False:
+            print('TEST FAILED: Type personal data failed.')     
             quit()     
 
-        sleep(TIME_SLEEP)             
+        test_result = book_quote()                                  
 
-        if test_passed == True:
-            test_passed = select_place(data_item['oficina'])
-        else:
-            print('TEST FAILED: Select province failed')          
-            quit()         
-
-        sleep(TIME_SLEEP)                         
-
-        if test_passed == True:
-            test_passed = select_task(data_item['tramite_policia'])
-        else:
-            print('TEST FAILED: Select task failed')          
-            quit()    
-
-        sleep(TIME_SLEEP)                                 
-
-        if test_passed == True:
-            test_passed = select_key_type()
-        else:
-            print('TEST FAILED: Select key type failed')          
-            quit()     
-
-        sleep(TIME_SLEEP)                                   
-
-        if test_passed == True:
-            test_passed = type_personal_data(data_item['nie'], data_item['name'], data_item['country'])
-        else:
-            print('TEST FAILED: Select oficinas failed')         
-            quit()    
-
-        sleep(TIME_SLEEP)                   
-
-        if test_passed == True:
-            test_passed = book_quote()
-        else:
-            print('TEST FAILED: Type personal data failed')     
-            quit()    
-
-        sleep(TIME_SLEEP)                                 
-
-        if test_passed == False:                    
-            print('TEST FAILED: Book quote failed')      
+        if test_result == False:                    
+            print('TEST FAILED: Book quote failed.')      
             quit()                  
 
         # Dorme por 10 segundos

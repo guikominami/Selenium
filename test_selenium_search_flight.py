@@ -7,7 +7,7 @@ from time import sleep
 from selenium.webdriver.common.by import By
 
 import functions as Fc
-from DATA_FLIGHTS import Flights
+from DATA_FLIGHTS import flights
 
 from datetime import date, timedelta
 
@@ -147,32 +147,32 @@ if __name__ == '__main__':
 
     link = 'https://www.google.com/travel/flights'
 
-    for data_item in Flights[0]:        
+    for data_item in flights:        
 
         options = ()
         chrome_browser = Fc.make_chrome_browser(link, *options)
 
-        test = reject_cookies()
+        test_result = reject_cookies()
 
-        if test == False:
+        if test_result == False:
             print('TEST FAILED: Reject cookies failed.')
             quit()    
 
-        test = select_destination(data_item['departure_city'], data_item['destination_city'])             
+        test_result = select_destination(data_item['departure_city'], data_item['destination_city'])             
 
-        if test == False:
+        if test_result == False:
             print('TEST FAILED: Select destination failed.')
             quit()     
 
-        test = select_dates(data_item['date_departure'], data_item['date_return'])    
+        test_result = select_dates(data_item['date_departure'], data_item['date_return'])    
 
-        if test == False:
+        if test_result == False:
             print('TEST FAILED: Select dates failed.')
             quit()    
 
-        test = click_search_flights()
+        test_result = click_search_flights()
 
-        if test == False:
+        if test_result == False:
             print('TEST FAILED: Click search flights failed.')
             quit()    
 
