@@ -1,0 +1,7 @@
+{
+    "python.pythonPath": "venv/bin/python",
+    "code-runner.clearPreviousOutput": true,
+    "code-runner.executorMap": {
+        "python": "python -u",
+    }
+}
