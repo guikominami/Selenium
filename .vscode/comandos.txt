@@ -1,0 +1,9 @@
+ativar ambiente virtual
+./venv/Scripts/activate
+
+Instalar pip
+python -m pip install --upgrade pip
+
+
+
+git push origin main -u
